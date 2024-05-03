@@ -5,10 +5,17 @@ import { fileURLToPath } from 'node:url';
 import { glob } from 'glob';
 import dts from 'vite-plugin-dts';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
+import styleX from 'vite-plugin-stylex';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), libInjectCss(), dts({ include: ['lib'] })],
+  plugins: [react(), libInjectCss(), dts({ include: ['lib'] }), styleX()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+      lib: resolve(__dirname, './lib'),
+    },
+  },
   build: {
     copyPublicDir: false,
     lib: {
@@ -16,7 +23,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime'],
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
       input: Object.fromEntries(
         glob.sync('lib/**/*.{ts,tsx}').map(file => [
           // The name of the entry point
